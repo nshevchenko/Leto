@@ -17,4 +17,10 @@
 // FEED ARRAY
 @property (strong, nonatomic) NSMutableArray *feedsArray;
 
+
+// NSXML PARSER
+@property (strong, nonatomic) NSXMLParser *feedParser;
+@property (strong, nonatomic) NSString* currentElement;
+@property (strong, nonatomic) Feed* creatingFeed;
+
 @end
