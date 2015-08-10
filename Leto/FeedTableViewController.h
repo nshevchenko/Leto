@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Feed.h"
 
-@interface FeedTableViewController : UITableViewController
+@interface FeedTableViewController : UITableViewController<NSXMLParserDelegate>
 
 // VIEW CONTROLLER
 @property (strong, nonatomic) IBOutlet UITableView *feedTableView;

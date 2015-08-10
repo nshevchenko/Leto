@@ -17,9 +17,23 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    _feedsArray = [[NSMutableArray init] alloc];
+    // init the feeds array
+    _feedsArray = [[NSMutableArray alloc] init];
+
+    // move table by 50 px
+    [self.tableView setContentInset:UIEdgeInsetsMake(50,0,0,0)];
     
+    NSURL *url = [NSURL URLWithString:@"http://www.fandango.com/rss/newmovies.rss"];
+
+    _feedParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
+    [_feedParser setDelegate:self];
+    [_feedParser parse];
     
+}
+
+- (void) refreshView {
+    _feedTableView = 
+    [_feedTableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -44,11 +58,12 @@
     NSString* identifier = @"feedCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
     
-    Feed* feed = [_feedsArray objectAtIndex:(int)indexPath];
+    Feed* feed = [_feedsArray objectAtIndex:(int)indexPath.row];
     if (cell == nil){
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     cell.textLabel.text = feed.title;
+//    NSLog(@"%@", feed.title);
     return cell;
 }
 
@@ -56,16 +71,29 @@
 // NSXML PARSING DELEGATES
 
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict {
+    _currentElement = elementName;
+    if ([elementName isEqualToString:@"item"]) {
+        _creatingFeed = [[Feed alloc] init];
+    }
     
 }
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {
-
+    if ([_currentElement isEqualToString:@"title"]) {
+        _creatingFeed.title = string;
+    }
 }
 
 
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName {
+    if ([elementName isEqualToString:@"item"]) {
+        [_feedsArray addObject:_creatingFeed];
+    }
+}
 
+- (void)parserDidEndDocument:(NSXMLParser *)parser {
+    [self refreshView];
+    NSLog(@"%i", (int)[_feedsArray count]);
 }
 
 @end
