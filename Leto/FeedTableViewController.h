@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Feed.h"
 
 @interface FeedTableViewController : UITableViewController
 
