@@ -31,9 +31,11 @@
     
 }
 
-- (void) refreshView {
-    _feedTableView = 
-    [_feedTableView reloadData];
+- (NSMutableArray*) sortFeedArray {
+    NSArray *sortedArray = [_feedsArray sortedArrayUsingComparator:^NSComparisonResult(Feed *feed1, Feed *feed2){
+        return [feed1.title compare:feed2.title];
+    }];
+    return sortedArray;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -75,7 +77,6 @@
     if ([elementName isEqualToString:@"item"]) {
         _creatingFeed = [[Feed alloc] init];
     }
-    
 }
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {
@@ -92,7 +93,9 @@
 }
 
 - (void)parserDidEndDocument:(NSXMLParser *)parser {
-    [self refreshView];
+    _feedsArray = [self sortFeedArray];
+    [_feedTableView reloadData];
+    
     NSLog(@"%i", (int)[_feedsArray count]);
 }
 

@@ -15,4 +15,9 @@
     return self;
 }
 
+- (NSComparisonResult)compare:(Feed *)otherObject {
+    return [self.title compare:otherObject.title];
+}
+
+
 @end
